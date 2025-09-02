@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gurmukhi → English Translator</title>
+    <style>
+      * { box-sizing: border-box; }
+      
+      body { 
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+        margin: 0; 
+        padding: 20px; 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+      
+      .card { 
+        max-width: 900px; 
+        margin: 0 auto; 
+        padding: 32px; 
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px; 
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      
+      h2 { 
+        text-align: center; 
+        color: #2d3748; 
+        margin-bottom: 8px; 
+        font-size: 2.2rem;
+        font-weight: 700;
+      }
+      
+      .subtitle {
+        text-align: center;
+        color: #718096;
+        margin-bottom: 32px;
+        font-size: 1.1rem;
+      }
+      
+      .row { 
+        display: flex; 
+        gap: 16px; 
+        align-items: center; 
+        flex-wrap: wrap; 
+        margin-bottom: 8px;
+      }
+      
+      label { 
+        display: block; 
+        font-weight: 600; 
+        margin-top: 24px; 
+        margin-bottom: 8px;
+        color: #2d3748;
+        font-size: 1.1rem;
+      }
+      
+      input[type="url"] { 
+        flex: 1; 
+        padding: 16px; 
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+      }
+      
+      input[type="url"]:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+      
+      input[type="file"] {
+        padding: 12px;
+        border: 2px dashed #cbd5e0;
+        border-radius: 12px;
+        background: #f7fafc;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      input[type="file"]:hover {
+        border-color: #667eea;
+        background: #edf2f7;
+      }
+      
+      button { 
+        padding: 16px 24px; 
+        cursor: pointer; 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+      
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      }
+      
+      button:active {
+        transform: translateY(0);
+      }
+      
+      .muted { 
+        color: #718096; 
+        font-size: 0.9rem; 
+        margin-top: 8px;
+        font-style: italic;
+      }
+      
+      .error { 
+        color: #e53e3e; 
+        font-size: 0.9rem;
+        background: #fed7d7;
+        padding: 12px;
+        border-radius: 8px;
+        border-left: 4px solid #e53e3e;
+        margin-top: 8px;
+      }
+      
+      .small { font-size: 0.9rem; }
+      
+      .spinner { 
+        display: inline-block; 
+        width: 20px; 
+        height: 20px; 
+        border: 3px solid #e2e8f0; 
+        border-top-color: #667eea; 
+        border-radius: 50%; 
+        animation: spin 1s linear infinite; 
+        margin-right: 8px;
+      }
+      
+      @keyframes spin { 
+        to { transform: rotate(360deg); } 
+      }
+      
+      .result { 
+        white-space: pre-wrap; 
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        padding: 24px; 
+        border-radius: 16px; 
+        border: 2px solid #e2e8f0;
+        font-size: 1rem;
+        line-height: 1.6;
+        max-height: 500px;
+        overflow-y: auto;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+      }
+      
+      .status {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 16px;
+        border-radius: 12px;
+        border-left: 4px solid #3182ce;
+        margin: 16px 0;
+        display: flex;
+        align-items: center;
+      }
+      
+      .success {
+        background: #f0fff4;
+        color: #2f855a;
+        border-left-color: #38a169;
+      }
+      
+      @media (max-width: 768px) {
+        body { padding: 16px; }
+        .card { padding: 24px; }
+        .row { flex-direction: column; align-items: stretch; }
+        button { width: 100%; }
+        h2 { font-size: 1.8rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Gurmukhi → English (YouTube or File)</h2>
+      <p class="subtitle">Provide a YouTube link (including live replay) or upload audio/video. We will transcribe and translate to English.</p>
+
+      <label>YouTube URL</label>
+      <div class="row">
+        <input id="ytUrl" type="url" placeholder="https://www.youtube.com/live/_QRMX_DQH7M?..." style="flex:1; padding: 8px;" />
+        <button id="btnYt">Transcribe YouTube</button>
+      </div>
+      <div class="muted small">Requires yt-dlp and ffmpeg installed on server PATH.</div>
+
+      <label>Or upload audio/video file</label>
+      <div class="row">
+        <input id="fileInput" type="file" accept="audio/*,video/*" />
+        <button id="btnFile">Transcribe File</button>
+      </div>
+
+      <div id="status" class="status" style="display: none;"></div>
+      <div id="error" class="error" style="display: none;"></div>
+
+      <label style="margin-top: 16px;">Result</label>
+      <div id="result" class="result"></div>
+    </div>
+
+    <script>
+      const statusEl = document.getElementById('status');
+      const errorEl = document.getElementById('error');
+      const resultEl = document.getElementById('result');
+
+      function setLoading(msg) {
+        statusEl.innerHTML = `<span class="spinner"></span> ${msg}`;
+        statusEl.style.display = 'flex';
+        errorEl.style.display = 'none';
+      }
+      function clearLoading() { 
+        statusEl.style.display = 'none'; 
+        statusEl.textContent = ''; 
+      }
+      function setError(msg) { 
+        errorEl.textContent = msg || ''; 
+        errorEl.style.display = msg ? 'block' : 'none';
+        statusEl.style.display = 'none';
+      }
+      function setResult(text) { 
+        resultEl.textContent = text || ''; 
+        if (text) {
+          errorEl.style.display = 'none';
+          statusEl.style.display = 'none';
+        }
+      }
+
+      document.getElementById('btnYt').addEventListener('click', async () => {
+        setError(''); setResult('');
+        const url = document.getElementById('ytUrl').value.trim();
+        if (!url) { setError('Please enter a YouTube URL.'); return; }
+        try {
+          setLoading('Downloading and transcribing...');
+          const res = await fetch('/api/transcribe-youtube', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url })
+          });
+          const data = await res.json();
+          clearLoading();
+          if (!res.ok) throw new Error(data.error || 'Failed');
+          setResult(data.text || '');
+        } catch (e) {
+          clearLoading(); setError(String(e.message || e));
+        }
+      });
+
+      document.getElementById('btnFile').addEventListener('click', async () => {
+        setError(''); setResult('');
+        const f = document.getElementById('fileInput').files[0];
+        if (!f) { setError('Please choose a file.'); return; }
+        try {
+          setLoading('Uploading and transcribing...');
+          const form = new FormData();
+          form.append('audio', f);
+          const res = await fetch('/api/transcribe-file', { method: 'POST', body: form });
+          const data = await res.json();
+          clearLoading();
+          if (!res.ok) throw new Error(data.error || 'Failed');
+          setResult(data.text || '');
+        } catch (e) {
+          clearLoading(); setError(String(e.message || e));
+        }
+      });
+    </script>
+  </body>
+  </html>
+
+
