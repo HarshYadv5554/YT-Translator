@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: yt-transcriber
+    env: node
+    buildCommand: |
+      apt-get update
+      apt-get install -y yt-dlp ffmpeg
+      npm install
+    startCommand: npm start
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: PORT
+        value: 10000
+      - key: YTDLP_PATH
+        value: yt-dlp
+      - key: FFMPEG_PATH
+        value: ffmpeg

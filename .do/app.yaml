@@ -1,0 +1,24 @@
+name: yt-transcriber
+services:
+- name: web
+  source_dir: /
+  github:
+    repo: HarshYadv5554/YT-Translator
+    branch: main
+  run_command: npm start
+  environment_slug: node-js
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  envs:
+  - key: OPENAI_API_KEY
+    scope: RUN_TIME
+    type: SECRET
+  - key: PORT
+    value: "8080"
+    scope: RUN_TIME
+  - key: YTDLP_PATH
+    value: "yt-dlp"
+    scope: RUN_TIME
+  - key: FFMPEG_PATH
+    value: "ffmpeg"
+    scope: RUN_TIME
