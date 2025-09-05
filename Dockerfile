@@ -5,10 +5,14 @@ RUN apk add --no-cache \
     python3 \
     py3-pip \
     ffmpeg \
-    && pip3 install yt-dlp
+    && python3 -m pip install --user yt-dlp \
+    && echo 'export PATH="/root/.local/bin:$PATH"' >> /root/.bashrc
 
 # Set working directory
 WORKDIR /app
+
+# Add yt-dlp to PATH
+ENV PATH="/root/.local/bin:$PATH"
 
 # Copy package files
 COPY package*.json ./
