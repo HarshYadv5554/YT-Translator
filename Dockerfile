@@ -14,6 +14,9 @@ WORKDIR /app
 # Add yt-dlp to PATH
 ENV PATH="/root/.local/bin:$PATH"
 
+# Create symbolic links for easier access
+RUN ln -sf /root/.local/bin/yt-dlp /usr/local/bin/yt-dlp
+
 # Copy package files
 COPY package*.json ./
 

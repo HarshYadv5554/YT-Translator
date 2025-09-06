@@ -4,7 +4,7 @@
   "main": "server/index.js",
   "scripts": {
     "dev": "cross-env PORT=3001 YTDLP_PATH=%LOCALAPPDATA%\\Microsoft\\WinGet\\Links\\yt-dlp.exe FFMPEG_PATH=%LOCALAPPDATA%\\Microsoft\\WinGet\\Links\\ffmpeg.exe nodemon server/index.js",
-    "start": "cross-env PORT=$PORT YTDLP_PATH=/root/.local/bin/yt-dlp FFMPEG_PATH=/usr/bin/ffmpeg node server/index.js",
+    "start": "cross-env PORT=$PORT YTDLP_PATH=yt-dlp FFMPEG_PATH=ffmpeg node server/index.js",
     "build": "echo 'No build step required for Node.js app'",
     "deploy:render": "echo 'Deploy to Render.com - see README.md'",
     "deploy:railway": "echo 'Deploy to Railway.app - see README.md'"
