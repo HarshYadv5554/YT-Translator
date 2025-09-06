@@ -17,8 +17,8 @@ ENV PATH="/root/.local/bin:$PATH"
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install dependencies (including devDependencies for cross-env)
+RUN npm ci
 
 # Copy application code
 COPY . .
