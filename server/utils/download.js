@@ -1,6 +1,16 @@
 const { spawn } = require('child_process');
 const path = require('path');
 
+// Helper function to check if a command exists
+function commandExists(command) {
+  return new Promise((resolve) => {
+    const [cmd, ...args] = command.split(' ');
+    const ps = spawn(cmd, args, { stdio: 'ignore', shell: true });
+    ps.on('error', () => resolve(false));
+    ps.on('exit', (code) => resolve(code === 0));
+  });
+}
+
 function run(command, args, options = {}) {
   return new Promise((resolve, reject) => {
     const ps = spawn(command, args, { stdio: 'inherit', shell: true, ...options });
@@ -14,13 +24,47 @@ function run(command, args, options = {}) {
 
 async function downloadYouTubeAudio(url, outDir) {
   const outPath = path.join(outDir, `yt_audio_%(id)s.%(ext)s`);
-  // Allow overriding executable paths via env
-  const ytdlpCmd = process.env.YTDLP_PATH && process.env.YTDLP_PATH.trim().length > 0
+  
+  // Allow overriding executable paths via env, with fallbacks for different environments
+  let ytdlpCmd = process.env.YTDLP_PATH && process.env.YTDLP_PATH.trim().length > 0
     ? process.env.YTDLP_PATH
     : 'yt-dlp';
-  const ffmpegPath = process.env.FFMPEG_PATH && process.env.FFMPEG_PATH.trim().length > 0
+  
+  let ffmpegPath = process.env.FFMPEG_PATH && process.env.FFMPEG_PATH.trim().length > 0
     ? process.env.FFMPEG_PATH
     : undefined;
+
+  // Try to find yt-dlp in common locations if not found in PATH
+  if (!await commandExists(ytdlpCmd)) {
+    const commonPaths = [
+      '/usr/local/bin/yt-dlp',
+      '/usr/bin/yt-dlp',
+      '/root/.local/bin/yt-dlp',
+      'python3 -m yt_dlp'
+    ];
+    
+    for (const testPath of commonPaths) {
+      if (await commandExists(testPath)) {
+        ytdlpCmd = testPath;
+        break;
+      }
+    }
+  }
+
+  // Try to find ffmpeg in common locations if not found in PATH
+  if (!ffmpegPath && !await commandExists('ffmpeg')) {
+    const commonFfmpegPaths = [
+      '/usr/local/bin/ffmpeg',
+      '/usr/bin/ffmpeg'
+    ];
+    
+    for (const testPath of commonFfmpegPaths) {
+      if (await commandExists(testPath)) {
+        ffmpegPath = testPath;
+        break;
+      }
+    }
+  }
 
   const args = [
     '-x', '--audio-format', 'mp3', '--audio-quality', '0',
